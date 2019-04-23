@@ -38,8 +38,8 @@ pub struct RelocInfo32 {
 }
 
 pub struct Symbol {
-    name: String,
-    offset: u32,
+    pub name: String,
+    pub offset: u32,
 }
 
 impl fmt::Debug for Symbol {
@@ -49,8 +49,8 @@ impl fmt::Debug for Symbol {
 }
 
 pub struct SourceLine {
-    line: u32,
-    offset: u32,
+    pub line: u32,
+    pub offset: u32,
 }
 
 impl fmt::Debug for SourceLine {
@@ -61,9 +61,9 @@ impl fmt::Debug for SourceLine {
 
 #[derive(Debug)]
 pub struct SourceFile {
-    name: String,
-    base_offset: u32,
-    lines: Vec<SourceLine>,
+    pub name: String,
+    pub base_offset: u32,
+    pub lines: Vec<SourceLine>,
 }
 
 #[derive(Debug)]
