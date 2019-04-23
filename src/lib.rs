@@ -356,23 +356,27 @@ fn test_parse_file() {
     assert_eq!(MemoryType::Fast, hunks[0].mem_type);
     assert_eq!(8, hunks[0].alloc_size);
     assert_eq!(8, hunks[0].data_size);
-//    assert_eq!(&0usize, &hunks[0].reloc_32.unwrap().len());
-//    assert_eq!(&3usize, &hunks[0].symbols.unwrap().len());
+    assert!(hunks[0].reloc_32.is_none());
+    assert_eq!(3usize, hunks[0].symbols.as_ref().unwrap().len());
  
     assert_eq!(HunkType::Data, hunks[1].hunk_type);
     assert_eq!(MemoryType::Any, hunks[1].mem_type);
     assert_eq!(8, hunks[1].alloc_size);
     assert_eq!(8, hunks[1].data_size);
-//    assert_eq!(&0usize, &hunks[1].reloc_32.unwrap().len());
-//    assert_eq!(&1usize, &hunks[1].symbols.unwrap().len());
+    assert!(hunks[1].reloc_32.is_none());
+    assert_eq!(1usize, hunks[1].symbols.as_ref().unwrap().len());
 
     assert_eq!(HunkType::Data, hunks[2].hunk_type);
     assert_eq!(MemoryType::Chip, hunks[2].mem_type);
     assert_eq!(24, hunks[2].alloc_size);
     assert_eq!(24, hunks[2].data_size);
+    assert!(hunks[2].reloc_32.is_none());
+    assert!(hunks[2].symbols.is_none());
 
     assert_eq!(HunkType::Bss, hunks[3].hunk_type);
     assert_eq!(MemoryType::Any, hunks[3].mem_type);
     assert_eq!(12, hunks[3].alloc_size);
     assert_eq!(12, hunks[3].data_size);
+    assert!(hunks[3].reloc_32.is_none());
+    assert_eq!(2usize, hunks[3].symbols.as_ref().unwrap().len());
 }
