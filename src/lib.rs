@@ -347,6 +347,17 @@ impl HunkParser {
 }
 
 #[test]
+fn test_memory_types() {
+    let hunks = HunkParser::parse_file("testdata/test.memory_types.amiga.exe").unwrap();
+
+    assert_eq!(3, hunks.len());
+    assert_eq!(MemoryType::Fast, hunks[0].mem_type);
+    assert_eq!(MemoryType::Chip, hunks[1].mem_type);
+    assert_eq!(MemoryType::Any, hunks[2].mem_type);
+}
+
+
+#[test]
 fn test_parse_file() {
     let hunks = HunkParser::parse_file("testdata/test.amiga.exe").unwrap();
 
