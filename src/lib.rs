@@ -78,7 +78,7 @@ pub struct Hunk {
     pub line_debug_info: Option<Vec<SourceFile>>,
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum MemoryType {
     Any,
     Chip,
@@ -110,20 +110,19 @@ impl HunkParser {
     }
 
     fn parse_bss(hunk: &mut Hunk, file: &mut File) -> io::Result<()> {
-        let (size, mem_type) = Self::get_size_type(try!(file.read_u32::<BigEndian>()));
+        let (size, _mem_type) = Self::get_size_type(try!(file.read_u32::<BigEndian>()));
         hunk.hunk_type = HunkType::Bss;
         hunk.data_size = size;
-        hunk.mem_type = mem_type;
         Ok(())
     }
 
     fn parse_code_or_data(hunk_type: HunkType, hunk: &mut Hunk, file: &mut File) -> io::Result<()> {
-        let (size, mem_type) = Self::get_size_type(try!(file.read_u32::<BigEndian>()));
+        let (size, _mem_type) = Self::get_size_type(try!(file.read_u32::<BigEndian>()));
         let mut code_data: Vec<u8> = vec![0; size];
+        dbg!(&hunk);
 
         hunk.data_size = size;
         hunk.hunk_type = hunk_type;
-        hunk.mem_type = mem_type;
 
         try!(file.read(&mut code_data));
 
@@ -332,6 +331,7 @@ impl HunkParser {
 
             try!(Self::fill_hunk(&mut hunk, &mut file));
 
+
             hunks.push(hunk);
         }
 
@@ -344,4 +344,35 @@ impl HunkParser {
         //println!("b {}", hunk_header);
         Ok(hunks)
     }
+}
+
+#[test]
+fn test_parse_file() {
+    let hunks = HunkParser::parse_file("testdata/test.amiga.exe").unwrap();
+
+    assert_eq!(4, hunks.len());
+
+    assert_eq!(HunkType::Code, hunks[0].hunk_type);
+    assert_eq!(MemoryType::Fast, hunks[0].mem_type);
+    assert_eq!(8, hunks[0].alloc_size);
+    assert_eq!(8, hunks[0].data_size);
+//    assert_eq!(&0usize, &hunks[0].reloc_32.unwrap().len());
+//    assert_eq!(&3usize, &hunks[0].symbols.unwrap().len());
+ 
+    assert_eq!(HunkType::Data, hunks[1].hunk_type);
+    assert_eq!(MemoryType::Any, hunks[1].mem_type);
+    assert_eq!(8, hunks[1].alloc_size);
+    assert_eq!(8, hunks[1].data_size);
+//    assert_eq!(&0usize, &hunks[1].reloc_32.unwrap().len());
+//    assert_eq!(&1usize, &hunks[1].symbols.unwrap().len());
+
+    assert_eq!(HunkType::Data, hunks[2].hunk_type);
+    assert_eq!(MemoryType::Chip, hunks[2].mem_type);
+    assert_eq!(24, hunks[2].alloc_size);
+    assert_eq!(24, hunks[2].data_size);
+
+    assert_eq!(HunkType::Bss, hunks[3].hunk_type);
+    assert_eq!(MemoryType::Any, hunks[3].mem_type);
+    assert_eq!(12, hunks[3].alloc_size);
+    assert_eq!(12, hunks[3].data_size);
 }
