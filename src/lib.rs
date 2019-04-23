@@ -356,6 +356,27 @@ fn test_memory_types() {
     assert_eq!(MemoryType::Any, hunks[2].mem_type);
 }
 
+#[test]
+fn test_symbols() {
+    let hunks = HunkParser::parse_file("testdata/test.symbols.amiga.exe").unwrap();
+
+    assert_eq!(2, hunks.len());
+    assert_eq!(4usize, hunks[0].symbols.as_ref().unwrap().len());
+    assert_eq!("code_start", hunks[0].symbols.as_ref().unwrap()[0].name);
+    assert_eq!(0u32, hunks[0].symbols.as_ref().unwrap()[0].offset);
+    assert_eq!("code_middle2", hunks[0].symbols.as_ref().unwrap()[1].name);
+    assert_eq!(2u32, hunks[0].symbols.as_ref().unwrap()[1].offset);
+    assert_eq!("code_middle1", hunks[0].symbols.as_ref().unwrap()[2].name);
+    assert_eq!(2u32, hunks[0].symbols.as_ref().unwrap()[2].offset);
+    assert_eq!("code_end", hunks[0].symbols.as_ref().unwrap()[3].name);
+    assert_eq!(4u32, hunks[0].symbols.as_ref().unwrap()[3].offset);
+
+    assert_eq!(2usize, hunks[1].symbols.as_ref().unwrap().len());
+    assert_eq!("data_start", hunks[1].symbols.as_ref().unwrap()[0].name);
+    assert_eq!(0u32, hunks[1].symbols.as_ref().unwrap()[0].offset);
+    assert_eq!("data_end", hunks[1].symbols.as_ref().unwrap()[1].name);
+    assert_eq!(2u32, hunks[1].symbols.as_ref().unwrap()[1].offset);
+}
 
 #[test]
 fn test_parse_file() {
