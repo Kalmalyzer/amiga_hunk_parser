@@ -119,7 +119,6 @@ impl HunkParser {
     fn parse_code_or_data(hunk_type: HunkType, hunk: &mut Hunk, file: &mut File) -> io::Result<()> {
         let (size, _mem_type) = Self::get_size_type(try!(file.read_u32::<BigEndian>()));
         let mut code_data: Vec<u8> = vec![0; size];
-        dbg!(&hunk);
 
         hunk.data_size = size;
         hunk.hunk_type = hunk_type;
